@@ -1,13 +1,11 @@
-import com.acjay.tagtypetemplater._
+import model.Model.MyString
 
 object Demo {
-  @tagged("String") type MyString
-
   def main(args: Array[String]) {
-    val regular = "Hello, world!"
-    val taggedString = MyString.fromString(regular)
-    val backToRegular = taggedString.untagged
-
-    println(taggedString)
+    val regular: String = "Hello"
+    val taggedString: MyString = MyString.fromString(regular)
+    val modifiedTaggedString: MyString = taggedString.modify(_ + ", World!")
+    val backToRegular: String = modifiedTaggedString.untagged
+    println(backToRegular)
   }
 }
