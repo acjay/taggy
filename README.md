@@ -32,14 +32,14 @@ Include the following line in your `build.sbt`:
 ```
 libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.2",
-  "com.acjay" %% "tagged" % "0.0.1"
+  "com.acjay" %% "taggy" % "0.0.1"
 )
 ```
 
 Import the annotation:
 
 ```
-import com.acjay.tagtypetemplater.tagged
+import com.acjay.taggy.tagged
 ```
 
 Then, declare your tagged type, specifying the underlying type as a string literal:
