@@ -1,4 +1,6 @@
-# Tag Type Templater
+# Taggy
+
+Single-line helper for better type safety.
 
 ## Meta
 
@@ -55,7 +57,7 @@ val address = Address.fromString("123 Main Street")
 val longitude = Longitude.fromDouble(44.12345)
 ``` 
 
-In a lot of cases, the compiler will let you pass a tagged type where its underlying type is expected, but not always. When you need to widen to the underlying type:
+In a lot of cases, the compiler will let you pass a tagged type where its underlying type is expected, but not always. When you need to widen back to the underlying type:
 
 ```
 val addressAsPlainString = address.untagged // addressAsPlainString: String
@@ -64,6 +66,10 @@ val addressAsPlainString = address.untagged // addressAsPlainString: String
 ## Technologies
 
 This project uses [Scalameta](http://scalameta.org/) to generate a bunch of boilerplate for making tagged types as convenient as possible to work with. It requires [Shapeless](https://github.com/milessabin/shapeless/) for its implementation of type tagging, but perhaps in the future other options will be offered, too.
+
+## Running the demos
+
+To try out the example run `sbt '+ example/run'`, which will run it for each supported Scala version.
 
 ## Releasing new versions
    
@@ -90,8 +96,8 @@ For reference on this process, you may want to see the following links:
   
 ## Todos
 
-- Cross-compile for 2.11 and 2.12
 - Nice errors
+- Optional overrides for all generated names
 - Other tagging approaches (e.g. wrapper class)
 - Tests
   

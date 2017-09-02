@@ -1,4 +1,4 @@
-package com.acjay.tagtypetemplater
+package com.acjay.taggy
 
 import scala.meta._
 
@@ -28,7 +28,7 @@ object ShapelessTaggedImpl {
     val companionObject = Term.Name(taggedType.value)
 
     // We'll name the `fromX` method based on the underlying type.
-    val fromMethodName = Term.Name("from" + underlyingType.value)
+    val fromMethod = Term.Name("from" + underlyingType.value)
 
     // The `untagged` helper goes in an implicit class, since the tagged type
     // is only a type alias, and can't have real methods. 
@@ -38,14 +38,14 @@ object ShapelessTaggedImpl {
       sealed trait $tag
       type $taggedType = shapeless.tag.@@[$underlyingType, $tag]
       object $companionObject {
-        def $fromMethodName(untagged: $underlyingType): $taggedType = {
+        def $fromMethod(untagged: $underlyingType): $taggedType = {
           val tagged = shapeless.tag[$tag](untagged)
           tagged
         }
       }
       implicit class $opsClass(val tagged: $taggedType) extends AnyVal { 
         def untagged = tagged.asInstanceOf[$underlyingType]
-        def modify(f: $underlyingType => $underlyingType) = $companionObject.$fromMethodName(f(untagged))
+        def modify(f: $underlyingType => $underlyingType) = $companionObject.$fromMethod(f(untagged))
       }
     """
   }

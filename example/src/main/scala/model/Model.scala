@@ -1,6 +1,6 @@
 package model
 
-import com.acjay.tagtypetemplater.tagged
+import com.acjay.taggy.tagged
 
 object Model {
   // Declared in a separate class to make sure importing the name also brings 

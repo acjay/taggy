@@ -1,5 +1,5 @@
 lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
-  scalaVersion := "2.11.11",
+  crossScalaVersions := Seq("2.11.11", "2.12.3"),
   resolvers += Resolver.sonatypeRepo("releases"),
   resolvers += Resolver.bintrayRepo("scalameta", "maven"),
   libraryDependencies += "org.scalameta" %% "scalameta" % "1.8.0",
@@ -10,18 +10,18 @@ lazy val commonSettings: Seq[Def.Setting[_]] = Seq(
 )
 
 // Define macros in this project.
-lazy val macros = (project in file(".")).settings(
-  commonSettings,
-  name := "tag-type-template"
-)
-
-// Use macros in this project.
-lazy val example = project.settings(
-  commonSettings,
-  name := "tag-type-template-example",
-  libraryDependencies ++= Seq(
-    "com.chuusai" %% "shapeless" % "2.3.2"
+lazy val macros = (project in file("."))
+  .settings(
+    commonSettings,
+    name := "taggy"
   )
-).dependsOn(macros)
 
-  
+lazy val example = project
+  .settings(
+    commonSettings,
+    name := "taggy-example",
+    libraryDependencies ++= Seq(
+      "com.chuusai" %% "shapeless" % "2.3.2"
+    )
+  )
+  .dependsOn(macros)
