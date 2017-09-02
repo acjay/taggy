@@ -96,10 +96,9 @@ For reference on this process, you may want to see the following links:
   
 ## Todos
 
-- Nice errors
 - Optional overrides for all generated names
+- Tests (does-not-compile test)
 - Other tagging approaches (e.g. wrapper class)
-- Tests
   
 ## Changelog
 
