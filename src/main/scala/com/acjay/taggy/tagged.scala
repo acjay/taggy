@@ -4,9 +4,22 @@ import scala.meta._
 import scala.collection.immutable.Seq
 
 /**
- * Annotation that turns an unassigned type declaration (what would normally 
+ * <p>Annotation that turns an unassigned type declaration (what would normally 
  * syntactically be an abstract type member) into a tagged type of the given
- * underlying real type.
+ * underlying real type.</p>
+ *
+ * <p>Uses this annotation as follows:</p> 
+ *
+ * <pre>@tagged[UnderlyingType] type NewType</pre>
+ *
+ * <p>To upgrade a value of UnderlyingType to NewType:</p>
+ *
+ * <pre>NewType.fromUnderlyingType(underlyingTypeValue)</pre>
+ *
+ * <p>To downgrade it back to UnderlyingType:</p>
+ *
+ * <pre>newTypeValue.untagged</pre>
+ * 
  * @tparam UnderlyingType the underlying (real) type.
  */
 class tagged[UnderlyingType] extends scala.annotation.StaticAnnotation {

@@ -7,7 +7,7 @@ Single-line helper for better type safety.
 * __State:__ development
 * __Point People:__ [@acjay](https://github.com/acjay)
 
-Types let programmers rely on the compiler catch errors where an operation is attempted on inapplicable data. But in real-world applications, the type of a variable isn't specific enough to capture the fact that data of the same type often aren't interchangeable from a business perspective.
+Types let programmers rely on the compiler catch errors where an operation is attempted on inapplicable data. But in real-world applications, the type of a variable isn't specific enough to capture the fact that data of the same type often aren't interchangeable from a business perspective. With tagged types, you assert the purpose of the data when it enters your system, and you're protected from mishaps as it flows through the logic layers. This is particularly applicable where you find that your system--or a subsystem of it--passes values along without inspecting or modifying them. 
 
 For example, you might have a function that returns longitude and latitude for a street address:
 
@@ -23,9 +23,11 @@ Tagged types let you attach annotate a value with its _purpose_. With tagged typ
 def locateAddress(address: Address): (Longitude, Lattitude) = ???
 ```
 
-With tagged types, you assert the purpose of the data when it enters your system, and you're protected from mishaps as it flows through the logic layers.
+More safe, and more readable!
 
 ## Usage
+
+### SBT setup
 
 Include the following line in your `build.sbt`:
 
@@ -34,7 +36,17 @@ libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.2",
   "com.acjay" %% "taggy" % "0.0.1"
 )
+
+// Enable Scala Meta macros for taggy
+addCompilerPlugin("org.scalameta" % "paradise" % "3.0.0-M10" cross CrossVersion.full)
+
+scalacOptions += "-Xplugin-require:macroparadise"
+
+// temporary workaround for https://github.com/scalameta/paradise/issues/10
+scalacOptions in (Compile, console) ~= (_ filterNot (_ contains "paradise"))
 ```
+
+### Using in your code
 
 Import the annotation:
 
@@ -62,6 +74,35 @@ In a lot of cases, the compiler will let you pass a tagged type where its underl
 ```
 val addressAsPlainString = address.untagged // addressAsPlainString: String
 ```
+
+### Additional notes
+
+- You can often write generic implicits for [de]serialization of tagged types. For example, to do this with Spray-JSON serialization, you might do something like:
+
+  ```
+  implicit def taggedStringTypeFormat[NewTypeTag](implicit reader: JsonReader[String], writer: JsonWriter[String]): JsonFormat[String @@ NewTypeTag] = new JsonFormat[String @@ NewTypeTag] {
+    def read(json: JsValue) = tag[NewTypeTag](reader.read(json))
+    def write(obj: String @@ NewTypeTag): JsValue = writer.write(obj)
+  }
+  ```
+
+  Note that this only works as a generic JsonFormat for all the new types that have an underlying type of `String`, and it relies on the implementation detail that taggy sythesizes a phantom type tag of the same name as the `NewType`, but with `Tag` appended at the end.
+
+  A fully generic version doesn't seem to work:
+
+  ```
+  // THIS CODE FAILS DUE TO IMPLICIT DIVERGENCE
+  implicit def taggedTypeFormat[NewTypeTag, UnderlyingType](implicit reader: JsonReader[UnderlyingType], writer: JsonWriter[UnderlyingType]): JsonFormat[UnderlyingType @@ NewTypeTag] = new JsonFormat[UnderlyingType @@ NewTypeTag] {
+    def read(json: JsValue) = tag[NewTypeTag](reader.read(json))
+    def write(obj: UnderlyingType @@ NewTypeTag): JsValue = writer.write(obj)
+  }
+  ```
+
+  A PR to this readme with a fully working generic version would be much appreciated!
+
+  - IntelliJ currently flags the declaration line as an error, where the `@tagged` is applied. But fortunately, it doesn't flag places where the tagged types or helper methods are used. Hopefully, IntelliJ will eventually internally expand macros before checking syntax.
+
+  - One known issue is that the Scala Meta compiler plugin for macro annotations appears to conflict with the code that ScalaPB produces. We solved this by moving our Protobuf `.proto` files into their own SBT subproject, without the macroparadise compiler option enabled. If you encounter any issues that seem similar, see if this approach works for you.
 
 ## Technologies
 
@@ -98,6 +139,7 @@ For reference on this process, you may want to see the following links:
 
 - Optional overrides for all generated names
 - Tests (does-not-compile test)
+- Streamline inclusion via SBT (as a plugin maybe?)
 - Other tagging approaches (e.g. wrapper class)
   
 ## Changelog
