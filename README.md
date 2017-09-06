@@ -110,7 +110,7 @@ This project uses [Scalameta](http://scalameta.org/) to generate a bunch of boil
 
 ## Running the demos
 
-To try out the example run `sbt '+ example/run'`, which will run it for each supported Scala version.
+To try out the example run `sbt '+ exampleJS/run' '+ exampleJVM/run'`, which will run it for each supported Scala version.
 
 ## Releasing new versions
    
@@ -118,14 +118,14 @@ For testing changes:
 
 1. Bump the version in `build.sbt` as appropriate, and add `-SNAPSHOT` to the end of the version number.
 2. Update the `libraryDependencies` line above in anticipation of the next version.
-3. Use the `sbt publish-signed` task to push snapshots to Maven Central.
+3. Use the `sbt +publish` task to push snapshots to Maven Central.
 4. Update the *Changelog* as noteworthy changes are made.
 5. During the testing period, merge new changes into the `development` branch, so that the `master` branch on Github always reflects the latest version on Maven Central. 
 
 For releasing new versions:
  
 1. Remove the `-SNAPSHOT` suffix in `build.sbt`.
-2. Publish to Maven Central staging using `sbt publish-signed`.
+2. Publish to Maven Central staging using `sbt +publish-signed`.
 3. Follow [the Maven Central workflow](http://central.sonatype.org/pages/releasing-the-deployment.html) for releasing the next version, logging in to Maven Central Nexus with an account set up with the privilege to publish to [the Open Source Project Repository Atomic Store entry](https://issues.sonatype.org/browse/OSSRH-20964). 
 4. Merge `development` into `master` to update the canonical version on Github.
   
@@ -137,10 +137,12 @@ For reference on this process, you may want to see the following links:
   
 ## Todos
 
+- Get full publish-and-release workflow going with sbt-release and CircleCI
 - Optional overrides for all generated names
 - Tests (does-not-compile test)
 - Streamline inclusion via SBT (as a plugin maybe?)
 - Other tagging approaches (e.g. wrapper class)
+- Cross-build for Scala Native?
   
 ## Changelog
 

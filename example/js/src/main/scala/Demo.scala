@@ -1,7 +1,8 @@
+import scala.scalajs.js
 import model.Model.MyString
 
-object Demo {
-  def main(args: Array[String]) {
+object Demo extends js.JSApp {
+  def main(): Unit = {
     val regular: String = "Hello"
     val taggedString: MyString = MyString.fromString(regular)
     val modifiedTaggedString: MyString = taggedString.modify(_ + ", World!")
