@@ -7,7 +7,7 @@ Single-line helper for better type safety.
 * __State:__ development
 * __Point People:__ [@acjay](https://github.com/acjay)
 
-Types let programmers rely on the compiler catch errors where an operation is attempted on inapplicable data. But in real-world applications, the type of a variable isn't specific enough to capture the fact that data of the same type often aren't interchangeable from a business perspective. With tagged types, you assert the purpose of the data when it enters your system, and you're protected from mishaps as it flows through the logic layers. This is particularly applicable where you find that your system--or a subsystem of it--passes values along without inspecting or modifying them. 
+Types let programmers rely on the compiler catch programmer errors, where an operation is attempted on inapplicable data. But in real-world applications, the type of a variable isn't specific enough to capture the fact that data of the same type often aren't interchangeable from a business perspective. With tagged types, you assert the _purpose_ of the data when it enters your system, and you're protected from misusing it as it flows through the logic layers. This is particularly applicable where you find that your system--or a subsystem of it--passes values along without inspecting or modifying them.
 
 For example, you might have a function that returns longitude and latitude for a street address:
 
@@ -15,15 +15,17 @@ For example, you might have a function that returns longitude and latitude for a
 def locateAddress(address: String): (Double, Double) = ???
 ```
 
-This typed interface might catch some errors for you, but it won't stop you from accidentally calling your function on a person's name (`locateAddress(person.name)`). Or maybe more likely, since the results are both `Double`s, it would be pretty easy to get them mixed up (`val (lattitude, longitude) = locateAddress(address)`).
+This typed interface might catch some errors for you, but it won't stop you from accidentally calling your function on a person's name (`locateAddress(person.name)`). Or maybe more likely, since the results are both `Double`s, it would be pretty easy to get them mixed up (`val (latitude, longitude) = locateAddress(address)`).
 
-Tagged types let you attach annotate a value with its _purpose_. With tagged types, the function would take the same values, but its signature might look like:
+With tagged types, the function would take the same values, but its signature might look like:
 
 ```
-def locateAddress(address: Address): (Longitude, Lattitude) = ???
+def locateAddress(address: Address): (Longitude, Latitude) = ???
 ```
 
 More safe, and more readable!
+
+As a bonus, even if you used converted this function to an anonymous function of type `Address => (Longitude, Latitude)`, it would be pretty much self-explanatory. 
 
 ## Usage
 
@@ -59,7 +61,7 @@ Then, declare your tagged type, specifying the underlying type as a string liter
 ```
 @tagged("String") type Address
 @tagged("Double") type Longitude
-@tagged("Double") type Lattitude
+@tagged("Double") type Latitude
 ```
 
 When data enters your system as a string, upgrade it to the tagged type:
