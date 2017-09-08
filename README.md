@@ -11,7 +11,7 @@ Types let programmers rely on the compiler catch programmer errors, where an ope
 
 For example, you might have a function that returns longitude and latitude for a street address:
 
-```
+```scala
 def locateAddress(address: String): (Double, Double) = ???
 ```
 
@@ -19,7 +19,7 @@ This typed interface might catch some errors for you, but it won't stop you from
 
 With tagged types, the function would take the same values, but its signature might look like:
 
-```
+```scala
 def locateAddress(address: Address): (Longitude, Latitude) = ???
 ```
 
@@ -33,7 +33,7 @@ As a bonus, even if you used converted this function to an anonymous function of
 
 Include the following line in your `build.sbt`:
 
-```
+```sbt
 libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.2",
   "com.acjay" %% "taggy" % "0.0.1"
@@ -52,13 +52,13 @@ scalacOptions in (Compile, console) ~= (_ filterNot (_ contains "paradise"))
 
 Import the annotation:
 
-```
+```scala
 import com.acjay.taggy.tagged
 ```
 
 Then, declare your tagged type, specifying the underlying type as a string literal:
 
-```
+```scala
 @tagged("String") type Address
 @tagged("Double") type Longitude
 @tagged("Double") type Latitude
@@ -66,14 +66,14 @@ Then, declare your tagged type, specifying the underlying type as a string liter
 
 When data enters your system as a string, upgrade it to the tagged type:
 
-```
+```scala
 val address = Address.fromString("123 Main Street")
 val longitude = Longitude.fromDouble(44.12345)
 ``` 
 
 In a lot of cases, the compiler will let you pass a tagged type where its underlying type is expected, but not always. When you need to widen back to the underlying type:
 
-```
+```scala
 val addressAsPlainString = address.untagged // addressAsPlainString: String
 ```
 
@@ -81,7 +81,7 @@ val addressAsPlainString = address.untagged // addressAsPlainString: String
 
 - You can often write generic implicits for [de]serialization of tagged types. For example, to do this with Spray-JSON serialization, you might do something like:
 
-  ```
+  ```scala
   implicit def taggedStringTypeFormat[NewTypeTag](implicit reader: JsonReader[String], writer: JsonWriter[String]): JsonFormat[String @@ NewTypeTag] = new JsonFormat[String @@ NewTypeTag] {
     def read(json: JsValue) = tag[NewTypeTag](reader.read(json))
     def write(obj: String @@ NewTypeTag): JsValue = writer.write(obj)
@@ -92,7 +92,7 @@ val addressAsPlainString = address.untagged // addressAsPlainString: String
 
   A fully generic version doesn't seem to work:
 
-  ```
+  ```scala
   // THIS CODE FAILS DUE TO IMPLICIT DIVERGENCE
   implicit def taggedTypeFormat[NewTypeTag, UnderlyingType](implicit reader: JsonReader[UnderlyingType], writer: JsonWriter[UnderlyingType]): JsonFormat[UnderlyingType @@ NewTypeTag] = new JsonFormat[UnderlyingType @@ NewTypeTag] {
     def read(json: JsValue) = tag[NewTypeTag](reader.read(json))
