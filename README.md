@@ -1,6 +1,6 @@
 # Taggy
 
-Single-line helper for better type safety.
+Single-line "newtype" helper for better type safety.
 
 ## Meta
 
@@ -35,8 +35,7 @@ Include the following line in your `build.sbt`:
 
 ```
 libraryDependencies ++= Seq(
-  "com.chuusai" %% "shapeless" % "2.3.2",
-  "com.acjay" %% "taggy" % "0.0.1"
+  "com.acjay" %% "taggy" % "0.0.2"
 )
 
 // Enable Scala Meta macros for taggy
@@ -59,9 +58,9 @@ import com.acjay.taggy.tagged
 Then, declare your tagged type, specifying the underlying type as a string literal:
 
 ```
-@tagged("String") type Address
-@tagged("Double") type Longitude
-@tagged("Double") type Latitude
+@tagged type Address = String
+@tagged type Longitude = Double
+@tagged type Latitude = Double
 ```
 
 When data enters your system as a string, upgrade it to the tagged type:
@@ -102,13 +101,13 @@ val addressAsPlainString = address.untagged // addressAsPlainString: String
 
   A PR to this readme with a fully working generic version would be much appreciated!
 
-  - IntelliJ currently flags the declaration line as an error, where the `@tagged` is applied. But fortunately, it doesn't flag places where the tagged types or helper methods are used. Hopefully, IntelliJ will eventually internally expand macros before checking syntax.
-
-  - One known issue is that the Scala Meta compiler plugin for macro annotations appears to conflict with the code that ScalaPB produces. We solved this by moving our Protobuf `.proto` files into their own SBT subproject, without the macroparadise compiler option enabled. If you encounter any issues that seem similar, see if this approach works for you.
+- One known issue is that the Scala Meta compiler plugin for macro annotations appears to conflict with the code that ScalaPB produces. We solved this by moving our Protobuf `.proto` files into their own SBT subproject, without the macroparadise compiler option enabled. If you encounter any issues that seem similar, see if this approach works for you.
 
 ## Technologies
 
-This project uses [Scalameta](http://scalameta.org/) to generate a bunch of boilerplate for making tagged types as convenient as possible to work with. It requires [Shapeless](https://github.com/milessabin/shapeless/) for its implementation of type tagging, but perhaps in the future other options will be offered, too.
+This project uses [Scalameta](http://scalameta.org/) to generate a bunch of boilerplate for making tagged types as convenient as possible to work with. It uses an implementation of tagged types [cut-and-pasted](https://github.com/milessabin/shapeless/blob/master/core/src/main/scala/shapeless/typeoperators.scala#L25-L34) from [Shapeless](https://github.com/milessabin/shapeless/) for its implementation of type tagging, but perhaps in the future other options will be offered, too.
+
+Take a look at https://github.com/alexknvl/newtypes, which has a very similar purpose. I probably wouldn't have written this library had I known about it in advance. However, one possible advantage of the Shapeless-inspired approach here is the ability to abstract over the `@@` tagging operator.
 
 ## Running the demos
 
@@ -147,6 +146,10 @@ For reference on this process, you may want to see the following links:
 - Cross-build for Scala Native?
   
 ## Changelog
+
+*1.0.0*
+- Change syntax to move the annnotation type parameter to the right-hand side of an assignment, inspired by NewTypes.
+- Remove Shapeless dependency.
 
 *0.0.1*
 - Initial release.

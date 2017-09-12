@@ -3,7 +3,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 // Project/Maven metadata
 name         in ThisBuild :=  "taggy"
-version      in ThisBuild :=  "0.0.1-SNAPSHOT"
+version      in ThisBuild :=  "1.0.0-SNAPSHOT"
 organization in ThisBuild :=  "com.acjay"
 homepage     in ThisBuild :=  Some(url("https://github.com/acjay/taggy"))
 licenses     in ThisBuild +=  ("MIT", url("https://opensource.org/licenses/MIT"))
@@ -78,10 +78,7 @@ lazy val example = crossProject(JSPlatform, JVMPlatform)
   .settings(
     commonSettings,
     noPublishSettings,
-    name := "taggy-example",
-    libraryDependencies ++= Seq(
-      "com.chuusai" %%% "shapeless" % "2.3.2"
-    )
+    name := "taggy-example"
   )
   .dependsOn(taggy)
 lazy val exampleJS = example.js

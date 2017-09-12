@@ -8,9 +8,9 @@ import scala.collection.immutable.Seq
  * syntactically be an abstract type member) into a tagged type of the given
  * underlying real type.</p>
  *
- * <p>Uses this annotation as follows:</p> 
+ * <p>Use this annotation as follows:</p> 
  *
- * <pre>@tagged[UnderlyingType] type NewType</pre>
+ * <pre>@tagged type NewType = UnderlyingType</pre>
  *
  * <p>To upgrade a value of UnderlyingType to NewType:</p>
  *
@@ -19,24 +19,23 @@ import scala.collection.immutable.Seq
  * <p>To downgrade it back to UnderlyingType:</p>
  *
  * <pre>newTypeValue.untagged</pre>
- * 
- * @tparam UnderlyingType the underlying (real) type.
  */
-class tagged[UnderlyingType] extends scala.annotation.StaticAnnotation {
+class tagged extends scala.annotation.StaticAnnotation {
+  // Parses the syntax for invoking the macro.
   inline def apply(defn: Any): Any = meta {
     // Macro annotation type and value parameters come back as AST data, not 
     // values, and are accessed by destructuring `this`.
-    (this, defn) match {
-      case (
-        q"new tagged[${underlyingType: Type.Name}]()",
-        q"..$mods type $newType"
-      ) => ShapelessTaggedImpl.expand(underlyingType, newType, mods)
-      case _ => abort("Correct usage: @tagged[UnderlyingType] type NewType" )
+    defn match {
+      case q"..$mods type $newType = ${underlyingType: Type.Name}" => 
+        TaggedImpl.expand(underlyingType, newType, mods)
+      case _ => 
+        abort("Correct usage: @tagged type NewType = UnderlyingType" )
     }
   }
 }
 
-object ShapelessTaggedImpl {
+object TaggedImpl {
+  // Performs the actual code generation.
   def expand(underlyingType: Type.Name, newType: Type.Name, mods: Seq[Mod]) = {
     // Shapeless needs a phantom type to join with the underlying type to
     // create our tagged type. Ideally should never leak to external code.
@@ -54,10 +53,10 @@ object ShapelessTaggedImpl {
 
     q"""
       sealed trait $tag
-      ..$mods type $newType = shapeless.tag.@@[$underlyingType, $tag]
+      ..$mods type $newType = com.acjay.taggy.tag.@@[$underlyingType, $tag]
       ..$mods object $companionObject {
         def $fromMethod(untagged: $underlyingType): $newType = {
-          val tagged = shapeless.tag[$tag](untagged)
+          val tagged = com.acjay.taggy.tag[$tag](untagged)
           tagged
         }
       }
@@ -66,5 +65,17 @@ object ShapelessTaggedImpl {
         def modify(f: $underlyingType => $underlyingType) = $companionObject.$fromMethod(f(untagged))
       }
     """
+  }
+}
+
+// Cut-and-pasted from Shapeless: http://bit.ly/2xvjeH8
+object tag {
+  def apply[U] = new Tagger[U]
+
+  trait Tagged[U]
+  type @@[+T, U] = T with Tagged[U]
+
+  class Tagger[U] {
+    def apply[T](t : T) : T @@ U = t.asInstanceOf[T @@ U]
   }
 }
