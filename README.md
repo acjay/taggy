@@ -35,7 +35,7 @@ Include the following line in your `build.sbt`:
 
 ```
 libraryDependencies ++= Seq(
-  "com.acjay" %% "taggy" % "0.0.2"
+  "com.acjay" %% "taggy" % "1.0.0"
 )
 
 // Enable Scala Meta macros for taggy
@@ -121,7 +121,6 @@ For testing changes:
 
 1. Merge `master` into `development`.
 1. Bump the version in `build.sbt` as appropriate, and add `-SNAPSHOT` to the end of the version number.
-1. Update the `libraryDependencies` line above in anticipation of the next version.
 1. Update the *Changelog* as noteworthy changes are made.
 1. Use the `sbt +publish` task to push snapshots to Maven Central.
 1. During the testing period, merge new changes into the `development` branch, so that the `master` branch on Github always reflects the latest version on Maven Central. 
@@ -130,6 +129,7 @@ For releasing new versions:
  
 1. Remove the `-SNAPSHOT` suffix in `build.sbt`.
 1. Publish to Maven Central staging using `sbt +publish-signed`.
+1. Update the `libraryDependencies` for the current version.
 1. Follow [the Maven Central workflow](http://central.sonatype.org/pages/releasing-the-deployment.html) for releasing the next version, logging in to Maven Central Nexus with an account set up with the privilege to publish to [the Open Source Project Repository Atomic Store entry](https://issues.sonatype.org/browse/OSSRH-20964). 
   
 For reference on this process, you may want to see the following links:

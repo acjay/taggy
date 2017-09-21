@@ -3,7 +3,7 @@ import com.typesafe.sbt.pgp.PgpKeys._
 
 // Project/Maven metadata
 name         in ThisBuild :=  "taggy"
-version      in ThisBuild :=  "1.0.0-SNAPSHOT"
+version      in ThisBuild :=  "1.0.0"
 organization in ThisBuild :=  "com.acjay"
 homepage     in ThisBuild :=  Some(url("https://github.com/acjay/taggy"))
 licenses     in ThisBuild +=  ("MIT", url("https://opensource.org/licenses/MIT"))
