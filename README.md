@@ -150,7 +150,7 @@ For reference on this process, you may want to see the following links:
 ## Changelog
 
 *1.0.0*
-- Change syntax to move the annnotation type parameter to the right-hand side of an assignment, inspired by NewTypes.
+- Change syntax to move the annnotation type parameter to the right-hand side of an assignment, inspired by [NewTypes](https://github.com/alexknvl/newtypes).
 - Remove Shapeless dependency.
 
 *0.0.1*
