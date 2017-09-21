@@ -1,4 +1,4 @@
-import model.Model.MyString
+import model.Model._
 
 object Demo {
   def main(args: Array[String]): Unit = {
@@ -7,5 +7,7 @@ object Demo {
     val modifiedTaggedString: MyString = taggedString.modify(_ + ", World!")
     val backToRegular: String = modifiedTaggedString.untagged
     println(backToRegular)
+    val length = implicitly[HasLength[MyString]].length(modifiedTaggedString)
+    println(s"length: $length")
   }
 }

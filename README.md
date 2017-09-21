@@ -81,6 +81,8 @@ val addressAsPlainString = address.untagged // addressAsPlainString: String
 - You can often write generic implicits for [de]serialization of tagged types. For example, to do this with Spray-JSON serialization, you might do something like:
 
   ```
+  import com.acjay.taggy.tag
+  import com.acjay.taggy.tag.@@
   implicit def taggedStringTypeFormat[NewTypeTag](implicit reader: JsonReader[String], writer: JsonWriter[String]): JsonFormat[String @@ NewTypeTag] = new JsonFormat[String @@ NewTypeTag] {
     def read(json: JsValue) = tag[NewTypeTag](reader.read(json))
     def write(obj: String @@ NewTypeTag): JsValue = writer.write(obj)
@@ -117,18 +119,18 @@ To try out the example run `sbt '+ exampleJS/run' '+ exampleJVM/run'`, which wil
    
 For testing changes:
 
+1. Merge `master` into `development`.
 1. Bump the version in `build.sbt` as appropriate, and add `-SNAPSHOT` to the end of the version number.
-2. Update the `libraryDependencies` line above in anticipation of the next version.
-3. Use the `sbt +publish` task to push snapshots to Maven Central.
-4. Update the *Changelog* as noteworthy changes are made.
-5. During the testing period, merge new changes into the `development` branch, so that the `master` branch on Github always reflects the latest version on Maven Central. 
+1. Update the `libraryDependencies` line above in anticipation of the next version.
+1. Update the *Changelog* as noteworthy changes are made.
+1. Use the `sbt +publish` task to push snapshots to Maven Central.
+1. During the testing period, merge new changes into the `development` branch, so that the `master` branch on Github always reflects the latest version on Maven Central. 
 
 For releasing new versions:
  
 1. Remove the `-SNAPSHOT` suffix in `build.sbt`.
-2. Publish to Maven Central staging using `sbt +publish-signed`.
-3. Follow [the Maven Central workflow](http://central.sonatype.org/pages/releasing-the-deployment.html) for releasing the next version, logging in to Maven Central Nexus with an account set up with the privilege to publish to [the Open Source Project Repository Atomic Store entry](https://issues.sonatype.org/browse/OSSRH-20964). 
-4. Merge `development` into `master` to update the canonical version on Github.
+1. Publish to Maven Central staging using `sbt +publish-signed`.
+1. Follow [the Maven Central workflow](http://central.sonatype.org/pages/releasing-the-deployment.html) for releasing the next version, logging in to Maven Central Nexus with an account set up with the privilege to publish to [the Open Source Project Repository Atomic Store entry](https://issues.sonatype.org/browse/OSSRH-20964). 
   
 For reference on this process, you may want to see the following links:
  
